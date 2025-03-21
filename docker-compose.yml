@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: vps_mysql_user
+      MYSQL_DATABASE: vps_mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: senha
+    ports:
+      - "3306:3306"  # Mapeia a porta 3306 do contêiner para localhost:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: vps_mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: senha
+    ports:
+      - "27017:27017"  # Mapeia a porta 27017 do contêiner para localhost:27017
+    volumes:
+      - mongodb_data:/data/db
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: vps_mysql_user
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: vps_postgres
+    ports:
+      - "5432:5432"  # Mapeia a porta 5432 do contêiner para localhost:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: vps_rabbit_admin
+      RABBITMQ_DEFAULT_PASS: senha
+    ports:
+      - "5672:5672"  # Porta do RabbitMQ (localhost:5672)
+      - "15672:15672"  # Porta do Management UI (localhost:15672)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"  # Mapeia a porta 80 do contêiner para localhost:80
+      - "443:443"  # Mapeia a porta 443 do contêiner para localhost:443
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend:/usr/share/nginx/html
+
+volumes:
+  mysql_data:
+  mongodb_data:
+  postgres_data:
+  rabbitmq_data:
